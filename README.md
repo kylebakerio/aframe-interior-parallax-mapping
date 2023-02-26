@@ -15,7 +15,7 @@ To use:
 
 basic proof of concept. See index.html for a guide to use. Just include the single interior-parallax.js file to use the component.
 
-98% a port of the work done by Mohsen Heydari, I just made it a component and changed it from .dds to supporting 6 png and equirectangular images. fwiw, I find the equirectangular image result to not be very satisfying; I think the base shader probably needs some more improvements, but maybe I just need better/different images somehow. See [here](https://github.com/mohsenheydari/three-interior-mapping/issues/1), where I reference [this video](https://youtu.be/QYvi1akO_Po?t=155) on skyboxes.
+98% a port of the work done by Mohsen Heydari, I just made it a component and changed it from .dds to supporting 6 png and equirectangular images. fwiw, I find the equirectangular image result to not be very satisfying; I think the base shader probably needs some more improvements, but maybe I just need better/different images somehow. See [here](https://github.com/mohsenheydari/three-interior-mapping/issues/1), where I reference [this video](https://youtu.be/QYvi1akO_Po?t=79) on the details on how opengl (for example) achieves the appearance of a sphere from within a cube in the case of skyboxes--probably a similar pixel sampling technique needs to be added to the shader?
 
 original three demo:
 http://venolabs.com/three-interior-mapping/
