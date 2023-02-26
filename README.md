@@ -1,6 +1,8 @@
 <!-- github -->
 ![jsDelivr hits (GitHub)](https://img.shields.io/jsdelivr/gh/hm/kylebakerio/aframe-interior-parallax-mapping)
 
+See these rooms? As long as you don't try to go inside them, they look fully 3d. In reality, they're just a plane with a cubemap and a shader, though. This means you can get the appearance of rooms within buildings very cheaply, a la [spiderman](https://www.youtube.com/watch?v=eX7x1mJrQJs).
+
 To use:
 
 ```html
