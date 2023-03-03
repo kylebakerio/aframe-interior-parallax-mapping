@@ -32,6 +32,9 @@ It may make more sense to photoshop cubemap faces directly with these principles
 It would also be possible to put in some 3d furniture pieces and some floor and wall and ceiling tectures a camera into a 3d scene and have it use some rules to make random rooms and take pictures at perfect scale using a three camera. I think that's probably the ideal option, just more work to do.
 Doing that, though, a bunch of images could be used to generate included images that could then be used by everyone, and the tool could be made available to people who want to use other furniture options.
 
+## reflections / window appearance
+would like to modify shader to use the reflection techniques described here: https://www.youtube.com/watch?v=xutvBtrG23A
+
 original three demo:
 http://venolabs.com/three-interior-mapping/
 
