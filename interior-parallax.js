@@ -11,11 +11,11 @@ AFRAME.registerComponent('interior-parallax', {
     // px = positive x, nx = negative x, etc.
     equirectangular: {type:"string", default:""},
     path: {type:"string", default:""},
-    px: {type:"string", default:"https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/ao1z9-sve70-001.png?v=1677364876129"}, 
-    nx: {type:"string", default:"https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/ao1z9-sve70-002.png?v=1677364877590"}, 
-    py: {type:"string", default:"https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/ao1z9-sve70-003.png?v=1677364880161"}, 
-    ny: {type:"string", default:"https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/ao1z9-sve70-004.png?v=1677364883136"}, 
-    pz: {type:"string", default:"https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/ao1z9-sve70-005.png?v=1677364885826"}, 
+    px: {type:"string", default:"https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/ao1z9-sve70-001.png?v=1677364876129"},
+    nx: {type:"string", default:"https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/ao1z9-sve70-002.png?v=1677364877590"},
+    py: {type:"string", default:"https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/ao1z9-sve70-003.png?v=1677364880161"},
+    ny: {type:"string", default:"https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/ao1z9-sve70-004.png?v=1677364883136"},
+    pz: {type:"string", default:"https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/ao1z9-sve70-005.png?v=1677364885826"},
     nz: {type:"string", default:"https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/ao1z9-sve70-006.png?v=1677364888191"},
   },
   async init() {
@@ -32,26 +32,21 @@ AFRAME.registerComponent('interior-parallax', {
     console.log(this.el.id)
     if (this.data.equirectangular) {
         console.warn("experimental/untested use of equirectangular instead of cube")
-        const textureLoader = new THREE.TextureLoader();
 
-				textureEquirec = textureLoader.load( 
-          this.data.equirectangular
-          // 'textures/2294472375_24a3b8ef46_o.jpg' 
-        );
-				textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
-				textureEquirec.encoding = THREE.sRGBEncoding;
-        console.log('loaded equirec texture:', textureEquirec)
-        
-        let waited;
-        console.log("waiting")
-        let waitPromise = new Promise((resolve, reject) => {
-          waited = resolve;
-        })
-        setTimeout(() => {
-          waited();
-        }, 2000)
-        await waitPromise;
-        console.log("finished waiting")
+        await new Promise(resolve => {
+          const textureLoader = new THREE.TextureLoader();
+          textureEquirec = textureLoader.load(
+              this.data.equirectangular,
+              // 'textures/2294472375_24a3b8ef46_o.jpg'
+              texture => {
+                console.log("loaded equirect:", texture);
+                resolve();
+              }
+          );
+          textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
+          textureEquirec.encoding = THREE.sRGBEncoding;
+        });
+
         const formatted = new THREE.WebGLCubeRenderTarget(
             textureEquirec.source.data.height // try setTimeout, source is undefined immediately but defined shortly after for some reason
             // 3437 // hardcoding for now....
@@ -62,7 +57,7 @@ AFRAME.registerComponent('interior-parallax', {
         // this part is a guess, no idea if shader will allow this
         windowMat = new THREE.ShaderMaterial(
             {
-                uniforms: { 
+                uniforms: {
                     cubeMap: {value: formatted.texture }
                 },
                 vertexShader: vertexShader,
@@ -73,13 +68,13 @@ AFRAME.registerComponent('interior-parallax', {
 
     else if (this.data.px) {
         console.log("using cube not equirect")
-      
+
         const loader = new THREE.CubeTextureLoader();
-      
+
         if (this.data.path) {
-          loader.setPath( 
+          loader.setPath(
             this.data.path
-            // 'https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/' 
+            // 'https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/'
           );
         }
 
@@ -97,13 +92,13 @@ AFRAME.registerComponent('interior-parallax', {
 
         // end attempt to replicate without dds added by kyle
 
-        cubeMap.encoding = THREE.sRGBEncoding  
+        cubeMap.encoding = THREE.sRGBEncoding
 
         console.log("using cubemap:", cubeMap)
 
         windowMat = new THREE.ShaderMaterial(
             {
-                uniforms: { 
+                uniforms: {
                     cubeMap: {value: cubeMap }
                 },
                 vertexShader: vertexShader,
@@ -123,14 +118,14 @@ AFRAME.registerComponent('interior-parallax', {
     }
     windowGeometry.computeTangents()
     this.el.components.material.material = windowMat; // give it the old college try?
-    
+
     // assuming the 'model-loaded' event already fired
     let mesh = this.el.getObject3D('mesh')
-    // assuming you want all nodes to have the same material        
+    // assuming you want all nodes to have the same material
     // var material = new THREE.MeshLambertMaterial({
     //   color: this.data.color,
     // });
-        
+
     mesh.traverse(function(node) {
       // change only the mesh nodes
       if(node.type != "Mesh") return;
@@ -139,7 +134,7 @@ AFRAME.registerComponent('interior-parallax', {
       node.material = windowMat
       tmp.dispose();
     })
-    
+
     // Mesh
     // windowMesh = new THREE.Mesh(windowGeometry, windowMat)
     // scene.add(windowMesh)
@@ -157,10 +152,10 @@ function loadFile(filename) {
       else{
             loader = new THREE.FileLoader()
         }
-         
-        loader.load(filename, 
-            data => { resolve(data); }, 
-            null, 
+
+        loader.load(filename,
+            data => { resolve(data); },
+            null,
             error => {reject(error);}
         );
     });
@@ -176,7 +171,7 @@ function loadFile(filename) {
 //     surfaceColor: '#fcfcfc'
 // }
 
-// let scene, renderer, camera, 
+// let scene, renderer, camera,
 //     controls, windowMesh, windowMat
 
 // function initialize(){
@@ -220,7 +215,7 @@ function loadFile(filename) {
 //     // trying to do this without .dds
 //     // see: https://threejs.org/docs/#api/en/textures/CubeTexture
 //     // const cubeMap = await loadFile('./textures/cube.dds')
-    
+
 //     const loader = new THREE.CubeTextureLoader();
 //     loader.setPath( 'https://cdn.glitch.global/42044d7c-847c-4275-8e47-bc5ebbeb3640/' );
 
@@ -232,14 +227,14 @@ function loadFile(filename) {
 
 //     // from original example, they do this:
 //     // const material = new THREE.MeshBasicMaterial( { color: 0xffffff, envMap: cubeMap } );
-    
+
 //     // end attempt to replicate without dds added by kyle
-    
+
 //     cubeMap.encoding = THREE.sRGBEncoding
 
 //     windowMat = new THREE.ShaderMaterial(
 //         {
-//             uniforms: { 
+//             uniforms: {
 //                 cubeMap: {value: cubeMap }
 //             },
 //             vertexShader: vertexShader,
