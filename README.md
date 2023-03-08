@@ -9,7 +9,7 @@ To use:
 <head>
   <title>My A-Frame Scene</title>
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/kylebakerio/aframe-interior-parallax-mapping@1.0.0/interior-parallax.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/kylebakerio/aframe-interior-parallax-mapping@1.1.0/interior-parallax.js"></script>
 </head>
 ```
 
